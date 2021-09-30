@@ -54,5 +54,19 @@ namespace UserMaintenance
 
             sr.Close();
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            User user = (User)listUsers.SelectedItem;
+            if (user != null)
+            {
+                var u = (
+                    from x in users
+                    where user.ID == x.ID
+                    select x
+                    ).FirstOrDefault();
+                users.Remove(u);
+            }
+        }
     }
 }
