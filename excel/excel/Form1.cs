@@ -89,7 +89,10 @@ namespace excel
 				values[counter, 5] = f.NumberOfRooms;
 				values[counter, 6] = f.FloorArea;
 				values[counter, 7] = f.Price;
-				values[counter, 8] = f.FloorArea / f.Price;
+				string v1 = GetCell(counter + 2, 6);
+				string v2 = GetCell(counter + 2, 7);
+				string vv = "=" + v2 + "/" + v1;
+				values[counter, 8] = vv;
 				counter++;
 			}
 
