@@ -60,68 +60,73 @@ namespace excel
 		}
 
 		private void CreateTable()
-		{
-			string[] headers = new string[] {
-		 "Kód",
-		"Eladó",
-	 "Oldal",
-	 "Kerület",
-	 "Lift",
-	 "Szobák száma",
-	 "Alapterület (m2)",
-	 "Ár (mFt)",
-	 "Négyzetméter ár (Ft/m2)"};
+        {
+            string[] headers = new string[] {
+         "Kód",
+        "Eladó",
+     "Oldal",
+     "Kerület",
+     "Lift",
+     "Szobák száma",
+     "Alapterület (m2)",
+     "Ár (mFt)",
+     "Négyzetméter ár (Ft/m2)"};
             for (int i = 0; i < headers.Length; i++)
             {
-				xlSheet.Cells[1,i+1] = headers[i];
+                xlSheet.Cells[1, i + 1] = headers[i];
             }
 
-			object[,] values = new object[Flats.Count, headers.Length];
+            object[,] values = new object[Flats.Count, headers.Length];
 
-			int counter = 0;
+            int counter = 0;
             foreach (Flat f in Flats)
             {
-				values[counter, 0] = f.Code;
-				values[counter, 1] = f.Vendor;
-				values[counter, 2] = f.Side;
-				values[counter, 3] = f.District;
-				values[counter, 4] = f.Elevator;
-				values[counter, 5] = f.NumberOfRooms;
-				values[counter, 6] = f.FloorArea;
-				values[counter, 7] = f.Price;
-				string v1 = GetCell(counter + 2, 6);
-				string v2 = GetCell(counter + 2, 7);
-				string vv = "=" + v2 + "/" + v1;
-				values[counter, 8] = vv;
-				counter++;
-			}
+                values[counter, 0] = f.Code;
+                values[counter, 1] = f.Vendor;
+                values[counter, 2] = f.Side;
+                values[counter, 3] = f.District;
+                values[counter, 4] = f.Elevator;
+                values[counter, 5] = f.NumberOfRooms;
+                values[counter, 6] = f.FloorArea;
+                values[counter, 7] = f.Price;
+                string v1 = GetCell(counter + 2, 6);
+                string v2 = GetCell(counter + 2, 7);
+                string vv = "=" + v2 + "/" + v1;
+                values[counter, 8] = vv;
+                counter++;
+            }
 
-			xlSheet.get_Range(
-				GetCell(2,1),
-				GetCell(1+values.GetLength(0), values.GetLength(1))).Value2=values;
+            xlSheet.get_Range(
+                GetCell(2, 1),
+                GetCell(1 + values.GetLength(0), values.GetLength(1))).Value2 = values;
 
-			Excel.Range headerRange = xlSheet.get_Range(GetCell(1, 1), GetCell(1, headers.Length));
-			headerRange.Font.Bold = true;
-			headerRange.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
-			headerRange.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
-			headerRange.EntireColumn.AutoFit();
-			headerRange.RowHeight = 40;
-			headerRange.Interior.Color = Color.LightBlue;
-			headerRange.BorderAround2(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThick);
+            formazas(headers, values);
+        }
 
-			Excel.Range nagyRange = xlSheet.get_Range(GetCell(2, 1), GetCell(1 + values.GetLength(0), values.GetLength(1)));
-			nagyRange.BorderAround2(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThick);
+        private void formazas(string[] headers, object[,] values)
+        {
+            Excel.Range headerRange = xlSheet.get_Range(GetCell(1, 1), GetCell(1, headers.Length));
+            headerRange.Font.Bold = true;
+            headerRange.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
+            headerRange.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            headerRange.EntireColumn.AutoFit();
+            headerRange.RowHeight = 40;
+            headerRange.Interior.Color = Color.LightBlue;
+            headerRange.BorderAround2(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThick);
 
-			Excel.Range elsoRangeOszlop = xlSheet.get_Range(GetCell(2, 1), GetCell(1 + values.GetLength(0), 1));
-			elsoRangeOszlop.Font.Bold = true;
-			elsoRangeOszlop.Interior.Color = Color.LightYellow;
+            Excel.Range nagyRange = xlSheet.get_Range(GetCell(2, 1), GetCell(1 + values.GetLength(0), values.GetLength(1)));
+            nagyRange.BorderAround2(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThick);
 
-			Excel.Range utolsoRangeOszlop = xlSheet.get_Range(GetCell(2, 9), GetCell(1 + values.GetLength(0), 9));
-			//utsoOszlRange.Formula = 
-			utolsoRangeOszlop.Interior.Color = Color.LightGreen;
-		}
+            Excel.Range elsoRangeOszlop = xlSheet.get_Range(GetCell(2, 1), GetCell(1 + values.GetLength(0), 1));
+            elsoRangeOszlop.Font.Bold = true;
+            elsoRangeOszlop.Interior.Color = Color.LightYellow;
 
-		private string GetCell(int x, int y)
+            Excel.Range utolsoRangeOszlop = xlSheet.get_Range(GetCell(2, 9), GetCell(1 + values.GetLength(0), 9));
+            //utsoOszlRange.Formula = 
+            utolsoRangeOszlop.Interior.Color = Color.LightGreen;
+        }
+
+        private string GetCell(int x, int y)
 		{
 			string ExcelCoordinate = "";
 			int dividend = y;
