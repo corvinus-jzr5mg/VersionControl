@@ -100,6 +100,25 @@ namespace excel
 				GetCell(2,1),
 				GetCell(1+values.GetLength(0), values.GetLength(1))).Value2=values;
 
+			Excel.Range headerRange = xlSheet.get_Range(GetCell(1, 1), GetCell(1, headers.Length));
+			headerRange.Font.Bold = true;
+			headerRange.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
+			headerRange.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+			headerRange.EntireColumn.AutoFit();
+			headerRange.RowHeight = 40;
+			headerRange.Interior.Color = Color.LightBlue;
+			headerRange.BorderAround2(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThick);
+
+			Excel.Range nagyRange = xlSheet.get_Range(GetCell(2, 1), GetCell(1 + values.GetLength(0), values.GetLength(1)));
+			nagyRange.BorderAround2(Excel.XlLineStyle.xlContinuous, Excel.XlBorderWeight.xlThick);
+
+			Excel.Range elsoRangeOszlop = xlSheet.get_Range(GetCell(2, 1), GetCell(1 + values.GetLength(0), 1));
+			elsoRangeOszlop.Font.Bold = true;
+			elsoRangeOszlop.Interior.Color = Color.LightYellow;
+
+			Excel.Range utolsoRangeOszlop = xlSheet.get_Range(GetCell(2, 9), GetCell(1 + values.GetLength(0), 9));
+			//utsoOszlRange.Formula = 
+			utolsoRangeOszlop.Interior.Color = Color.LightGreen;
 		}
 
 		private string GetCell(int x, int y)
