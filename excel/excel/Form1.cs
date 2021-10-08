@@ -122,7 +122,7 @@ namespace excel
             elsoRangeOszlop.Interior.Color = Color.LightYellow;
 
             Excel.Range utolsoRangeOszlop = xlSheet.get_Range(GetCell(2, 9), GetCell(1 + values.GetLength(0), 9));
-            //utsoOszlRange.Formula = 
+            
             utolsoRangeOszlop.Interior.Color = Color.LightGreen;
         }
 
