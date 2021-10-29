@@ -17,48 +17,86 @@ namespace webszolgaltatas
     public partial class Form1 : Form
     {
         BindingList<RateData> Rates = new BindingList<RateData>();
-
+        BindingList<string> Currencies = new BindingList<string>();
         public Form1()
         {
+
             InitializeComponent();
-            CallWebService();
+            comboBox1.DataSource = Currencies;
+
+            MNBArfolyamServiceSoapClient mnbService = new MNBArfolyamServiceSoapClient();
+
+            GetCurrenciesRequestBody request = new GetCurrenciesRequestBody();
+
+
+            var response = mnbService.GetCurrencies(request);
+
+            var result = response.GetCurrenciesResult;
+            XmlDocument vxml = new XmlDocument();
+            vxml.LoadXml(result);
+
+
+            foreach (XmlElement item in vxml.DocumentElement.FirstChild.ChildNodes)
+            {
+                Currencies.Add(item.InnerText);
+            }
+
+
+            RefreshData();
+        }
+
+        private void RefreshData()
+        {
+            Rates.Clear();
+            string result = CallWebService();
+
             dataGridView1.DataSource = Rates;
+            comboBox1.DataSource = Currencies;
+
+            DoTheWork(result);
+
+            CreateChart();
+        }
+
+        private void CreateChart()
+        {
             chartRateData.DataSource = Rates;
+            var series = chartRateData.Series[0];
+            series.ChartType = SeriesChartType.Line;
+            series.XValueMember = "Date";
+            series.YValueMembers = "Value";
+            series.BorderWidth = 2;
+            var legend = chartRateData.Legends[0];
+            legend.Enabled = false;
+            var chartArea = chartRateData.ChartAreas[0];
+            chartArea.AxisX.MajorGrid.Enabled = false;
+            chartArea.AxisY.MajorGrid.Enabled = false;
+            chartArea.AxisY.IsStartedFromZero = false;
 
         }
 
-        private void CallWebService()
+        private string CallWebService()
         {
-            // A változó deklarációk jobb oldalán a "var" egy dinamikus változó típus.
-            // A "var" változó az első értékadás pillanatában a kapott érték típusát veszi fel, és később nem változtatható.
-            // Jelen példa első sora tehát ekvivalens azzal, ha a "var" helyélre a MNBArfolyamServiceSoapClient-t írjuk.
-            // Ebben a formában azonban olvashatóbb a kód, és változtatás esetén elég egy helyen átírni az osztály típusát.
-            var mnbService = new MNBArfolyamServiceSoapClient();
-
-            var request = new GetExchangeRatesRequestBody()
+            MNBArfolyamServiceSoapClient mnbService = new MNBArfolyamServiceSoapClient();
+            GetExchangeRatesRequestBody request = new GetExchangeRatesRequestBody()
             {
-                currencyNames = "EUR",
-                startDate = "2020-01-01",
-                endDate = "2020-06-30"
+                currencyNames = comboBox1.SelectedItem.ToString(),
+                startDate = dateTimePicker1.Value.ToString(),
+                endDate = dateTimePicker2.Value.ToString()
             };
 
-            // Ebben az esetben a "var" a GetExchangeRates visszatérési értékéből kapja a típusát.
-            // Ezért a response változó valójában GetExchangeRatesResponseBody típusú.
             var response = mnbService.GetExchangeRates(request);
-
-            // Ebben az esetben a "var" a GetExchangeRatesResult property alapján kapja a típusát.
-            // Ezért a result változó valójában string típusú.
             var result = response.GetExchangeRatesResult;
 
-            // XML document létrehozása és az aktuális XML szöveg betöltése
+            return result;
+        }
+
+        private void DoTheWork(string result)
+        {
             var xml = new XmlDocument();
             xml.LoadXml(result);
-
-            // Végigmegünk a dokumentum fő elemének gyermekein
             foreach (XmlElement element in xml.DocumentElement)
             {
-                // Létrehozzuk az adatsort és rögtön hozzáadjuk a listához
-                // Mivel ez egy referencia típusú változó, megtehetjük, hogy előbb adjuk a listához és csak később töltjük fel a tulajdonságait
                 var rate = new RateData();
                 Rates.Add(rate);
 
@@ -75,22 +113,24 @@ namespace webszolgaltatas
                 if (unit != 0)
                     rate.Value = value / unit;
             }
+        }
 
-            chartRateData.DataSource = Rates;
+        private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
+        {
+            RefreshData();
 
-            var series = chartRateData.Series[0];
-            series.ChartType = SeriesChartType.Line;
-            series.XValueMember = "Date";
-            series.YValueMembers = "Value";
-            series.BorderWidth = 2;
+        }
 
-            var legend = chartRateData.Legends[0];
-            legend.Enabled = false;
+        private void dateTimePicker2_ValueChanged(object sender, EventArgs e)
+        {
+            RefreshData();
 
-            var chartArea = chartRateData.ChartAreas[0];
-            chartArea.AxisX.MajorGrid.Enabled = false;
-            chartArea.AxisY.MajorGrid.Enabled = false;
-            chartArea.AxisY.IsStartedFromZero = false;
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            RefreshData();
+
         }
     }
 }
