@@ -23,7 +23,6 @@ namespace mikulas.Abstractions
         }
 
         protected abstract void DrawImage(Graphics g);
-
         public virtual void MoveToy()
         {
             this.Left += 1;

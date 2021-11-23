@@ -99,5 +99,10 @@ namespace mikulas
             }
             button.BackColor = colorPicker.Color;
         }
+
+        private void btnSelectPresent_Click(object sender, EventArgs e)
+        {
+            Factory = new PresentFactory { BoxColor = btnBox_Color.BackColor, RibbonColor = btnRibbon_Color.BackColor };
+        }
     }
 }
